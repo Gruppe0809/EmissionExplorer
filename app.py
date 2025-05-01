@@ -11,15 +11,15 @@ from sklearn.metrics import mean_absolute_error
 
 # Seitenkonfiguration
 st.set_page_config(
-    page_title="CO2-Fußabdruck-Tracker für Reisen",
+    page_title="CO2-Fussabdruck-Tracker für Reisen",
     page_icon="🌍",
     layout="wide"
 )
 
 # Titel und Beschreibung
-st.title("EmissionExplorer - CO2-Fußabdruck-Tracker für Reisen")
+st.title("EmissionExplorer - CO2-Fussabdruck-Tracker für Reisen")
 st.markdown("""
-Diese App hilft dir, den CO2-Fußabdruck deiner Reisen zu berechnen und zu visualisieren.
+Diese App hilft dir, den CO2-Fussabdruck deiner Reisen zu berechnen und zu visualisieren.
 Vergleiche verschiedene Transportmittel und finde die umweltfreundlichste Option für deine Reiseroute!
 """)
 
@@ -99,7 +99,7 @@ def train_co2_model():
     # Modell und Eingabefaktoren zurückgeben
     return model, list(X.columns)
 
-# Funktion zur Vorhersage des CO2-Fußabdrucks mit ML
+# Funktion zur Vorhersage des CO2-Fussabdrucks mit ML
 def predict_co2_with_ml(distance, vehicle_age, vehicle_type, season, traffic_level, model, columns):
     # Eingabedaten für das Modell vorbereiten
     input_data = pd.DataFrame({
@@ -156,7 +156,7 @@ with st.sidebar:
     travelers = st.number_input("Anzahl der Reisenden", min_value=1, value=1)
     
     # Berechnung starten
-    calculate_button = st.button("CO2-Fußabdruck berechnen")
+    calculate_button = st.button("CO2-Fussabdruck berechnen")
     
     # Machine Learning Abschnitt
     st.markdown("---")
@@ -190,7 +190,7 @@ emission_factors = {
     "Motorrad": 0.11,
 }
 
-# Hauptfunktion zur Berechnung des CO2-Fußabdrucks
+# Hauptfunktion zur Berechnung des CO2-Fussabdrucks
 def calculate_co2_footprint(start, end, transports, num_travelers):
     # Geocoding von Start- und Endpunkt
     geolocator = Nominatim(user_agent="co2_footprint_tracker")
@@ -242,7 +242,7 @@ def calculate_co2_footprint(start, end, transports, num_travelers):
 
 # Hauptbereich - Ergebnisdarstellung
 if calculate_button:
-    with st.spinner("Berechne CO2-Fußabdruck..."):
+    with st.spinner("Berechne CO2-Fussabdruck..."):
         result = calculate_co2_footprint(start_point, end_point, selected_transports, travelers)
         
         if result:
@@ -288,7 +288,7 @@ if calculate_button:
                 st.subheader("Details")
                 st.dataframe(df, use_container_width=True)
                 
-                # Tipps zur Reduzierung des CO2-Fußabdrucks
+                # Tipps zur Reduzierung des CO2-Fussabdrucks
                 st.subheader("Tipps zum CO2-Sparen")
                 tips = [
                     "Wähle möglichst oft öffentliche Verkehrsmittel",
@@ -453,7 +453,7 @@ st.markdown("---")
 st.subheader("Über die App")
 st.write("""
 Diese App wurde im Rahmen eines Gruppenprojekts für den Kurs 'Grundlagen und Methoden der Informatik' 
-an der Universität St. Gallen entwickelt. Sie hilft Nutzern, den ökologischen Fußabdruck ihrer Reisen 
+an der Universität St. Gallen entwickelt. Sie hilft Nutzern, den ökologischen Fussabdruck ihrer Reisen 
 zu verstehen und umweltbewusstere Entscheidungen zu treffen.
 
 Die App integriert sowohl konventionelle Berechnungsmethoden als auch fortschrittliche 

@@ -3,6 +3,5 @@ pandas
 requests
 plotly
 numpy
-joblib
 geopy
 scikit-learn
