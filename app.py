@@ -1,70 +1,68 @@
-import streamlit as st
-import pandas as pd
-import requests
-import plotly.express as px
-import numpy as np
-from geopy.geocoders import Nominatim
-from geopy.distance import geodesic
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_absolute_error
+# Import der benötigten Bibliotheken
+import streamlit as st  # Frontend-Framework für die Web-App
+import pandas as pd    # Für Datenverarbeitung und -analyse
+import requests        # Für HTTP-Anfragen
+import plotly.express as px  # Für interaktive Visualisierungen
+import numpy as np          # Für numerische Berechnungen
+from geopy.geocoders import Nominatim  # Für Geocoding (Umwandlung von Adressen in Koordinaten)
+from geopy.distance import geodesic    # Für Distanzberechnungen zwischen Koordinaten
+from sklearn.ensemble import RandomForestRegressor  # ML-Modell für CO2-Vorhersagen
+from sklearn.model_selection import train_test_split  # Für Aufteilung der Trainingsdaten
+from sklearn.metrics import mean_absolute_error     # Für Modellbewertung
 
-# Seitenkonfiguration
+# Seitenkonfiguration für die Streamlit-App
 st.set_page_config(
-    page_title="CO2-Fussabdruck-Tracker für Reisen",
-    page_icon="🌍",
-    layout="wide"
+    page_title="CO2-Fussabdruck-Tracker für Reisen",  # Browser-Titel
+    page_icon="🌍",    # Favicon der App
+    layout="wide"      # Breites Layout für bessere Darstellung
 )
 
-# Titel und Beschreibung
+# Titel und Beschreibung der App
 st.title("EmissionExplorer - CO2-Fussabdruck-Tracker für Reisen")
 st.markdown("""
 Diese App hilft dir, den CO2-Fussabdruck deiner Reisen zu berechnen und zu visualisieren.
 Vergleiche verschiedene Transportmittel und finde die umweltfreundlichste Option für deine Reiseroute!
 """)
 
-# Funktion zum Trainieren eines einfachen ML-Modells
-@st.cache_data
+# ML-Modell-Training mit synthetischen Daten
+@st.cache_data  # Caching der Modellergebnisse für bessere Performance
 def train_co2_model():
-    # In einer realen Anwendung würden Sie hier einen echten Datensatz verwenden
-    # Für dieses Beispiel erstellen wir synthetische Daten
-    
-    # Synthetische Daten generieren
+    # Initialisierung der Zufallsgenerierung für reproduzierbare Ergebnisse
     np.random.seed(42)
-    n_samples = 1000
+    n_samples = 1000  # Anzahl der synthetischen Datenpunkte
+
+    # Generierung der Eingabevariablen
+    distances = np.random.uniform(10, 1000, n_samples)  # Zufällige Distanzen in km
+    vehicle_ages = np.random.randint(0, 21, n_samples)  # Zufälliges Fahrzeugalter
     
-    # Eingabefaktoren
-    distances = np.random.uniform(10, 1000, n_samples)
-    vehicle_ages = np.random.randint(0, 21, n_samples)
-    
-    # One-hot encoding für kategorische Variablen
+    # Kategorische Variablen erstellen
     vehicle_types = np.random.choice(["Kleinwagen", "Mittelklasse", "SUV", "Luxusklasse"], n_samples)
-    vehicle_type_encoded = pd.get_dummies(vehicle_types, prefix='vehicle_type')
+    vehicle_type_encoded = pd.get_dummies(vehicle_types, prefix='vehicle_type')  # One-Hot-Encoding
     
     seasons = np.random.choice(["Frühling", "Sommer", "Herbst", "Winter"], n_samples)
-    season_encoded = pd.get_dummies(seasons, prefix='season')
+    season_encoded = pd.get_dummies(seasons, prefix='season')  # One-Hot-Encoding
     
-    traffic_levels = np.random.randint(1, 11, n_samples)
+    traffic_levels = np.random.randint(1, 11, n_samples)  # Verkehrsaufkommen von 1-10
+
+    # Basisemissionen pro Kilometer
+    base_emissions = distances * 0.17  # Grundlegende CO2-Emissionen pro km
     
-    # CO2-Emissionen basierend auf den Eingabefaktoren berechnen (vereinfachtes Modell)
-    base_emissions = distances * 0.17  # Basisemissionen (wie in der ursprünglichen App)
-    
-    # Modifikatoren hinzufügen
-    age_factor = 1 + vehicle_ages * 0.01  # Ältere Autos erzeugen mehr CO2
+    # Einflussfaktoren auf die CO2-Emissionen
+    age_factor = 1 + vehicle_ages * 0.01  
     
     type_factor = np.ones(n_samples)
-    type_factor[vehicle_types == "Kleinwagen"] = 0.8
-    type_factor[vehicle_types == "Mittelklasse"] = 1.0
-    type_factor[vehicle_types == "SUV"] = 1.4
-    type_factor[vehicle_types == "Luxusklasse"] = 1.6
+    type_factor[vehicle_types == "Kleinwagen"] = 0.8    
+    type_factor[vehicle_types == "Mittelklasse"] = 1.0  
+    type_factor[vehicle_types == "SUV"] = 1.4           
+    type_factor[vehicle_types == "Luxusklasse"] = 1.6   
     
     season_factor = np.ones(n_samples)
-    season_factor[seasons == "Frühling"] = 1.0
-    season_factor[seasons == "Sommer"] = 0.95
-    season_factor[seasons == "Herbst"] = 1.05
-    season_factor[seasons == "Winter"] = 1.15
+    season_factor[seasons == "Frühling"] = 1.0    
+    season_factor[seasons == "Sommer"] = 0.95     
+    season_factor[seasons == "Herbst"] = 1.05     
+    season_factor[seasons == "Winter"] = 1.15  
     
-    traffic_factor = 1 + (traffic_levels - 1) * 0.05  # Mehr Verkehr = mehr CO2
+    traffic_factor = 1 + (traffic_levels - 1) * 0.05 
     
     # Zielwerte berechnen (CO2-Emissionen)
     co2_emissions = base_emissions * age_factor * type_factor * season_factor * traffic_factor
@@ -181,13 +179,22 @@ with st.sidebar:
     - ML-Modell: Trainiert auf synthetischen Daten (Demozwecke)
     """)
 
-# CO2-Emissionsfaktoren in kg CO2 pro Personenkilometer
+# CO2-Emissionsfaktoren für verschiedene Transportmittel
 emission_factors = {
-    "Auto": 0.17,
-    "Flugzeug": 0.24,
-    "Zug": 0.04,
-    "Bus": 0.07,
-    "Motorrad": 0.11,
+    "Auto": 0.17,      
+    "Flugzeug": 0.24,  
+    "Zug": 0.04,       
+    "Bus": 0.07,       
+    "Motorrad": 0.11   
+}
+
+# Distanzfaktoren für realistischere Routenberechnung
+distance_factors = {
+    "Auto": 1.2,       
+    "Flugzeug": 1.0,   
+    "Zug": 1.3,       
+    "Bus": 1.3,      
+    "Motorrad": 1.2    
 }
 
 # Hauptfunktion zur Berechnung des CO2-Fussabdrucks
@@ -275,8 +282,8 @@ if calculate_button:
                     co2 = transport_data["CO2 pro Person (kg)"]
                     
                     # Umweltvergleich erstellen
-                    trees_needed = round(co2 / 21, 2)  # Ein Baum absorbiert ca. 21 kg CO2 pro Jahr
-                    equivalent_days = round(co2 / 10, 1)  # Durchschnittliche CO2-Emissionen pro Person pro Tag (geschätzt)
+                    trees_needed = round(co2 / 21, 2)  
+                    equivalent_days = round(co2 / 10, 1)  
                     
                     st.write(f"**{transport}:** {co2} kg CO2 pro Person")
                     st.write(f"Entspricht dem CO2, das {trees_needed} Bäume in einem Jahr aufnehmen")

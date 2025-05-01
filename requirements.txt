@@ -1,7 +1,7 @@
-streamlit
-pandas
-requests
-plotly
-numpy
-geopy
-scikit-learn
+streamlit       # Framework für die Erstellung von Webanwendungen mit Python
+pandas          # Bibliothek für Datenanalyse und -manipulation
+numpy           # Bibliothek für numerische Berechnungen und Arrays
+requests        # Bibliothek für HTTP-Anfragen
+plotly          # Bibliothek für interaktive Visualisierungen
+geopy           # Bibliothek für Geokodierung und Distanzberechnungen
+scikit-learn    # Bibliothek für maschinelles Lernen und Datenanalyse
