@@ -466,3 +466,14 @@ zu verstehen und umweltbewusstere Entscheidungen zu treffen.
 Die App integriert sowohl konventionelle Berechnungsmethoden als auch fortschrittliche 
 Machine Learning-Techniken, um präzisere CO2-Vorhersagen zu ermöglichen.
 """)
+
+
+
+# Sources:
+# 	• Streamlit-Dokumentation: Die Benutzeroberfläche wurde mithilfe des Streamlit-Frameworks erstellt: https://docs.streamlit.io/library/get-started
+# 	• Geopy-Bibliothek: Für die Geocodierung und Distanzberechnung wurde die Geopy-Bibliothek verwendet: https://geopy.readthedocs.io/en/stable/
+# 	• Plotly Express: Die interaktiven Visualisierungen wurden mit Plotly Express erstellt: https://plotly.com/python/plotly-express/
+# 	• Scikit-learn: Das Machine Learning-Modell wurde mit Scikit-learn implementiert: https://scikit-learn.org/stable/modules/ensemble.html#forest
+# 	• CO2-Emissionsdaten: Die verwendeten Emissionsfaktoren basieren auf Durchschnittswerten aus öffentlichen Forschungsdaten des Umweltbundesamtes: https://www.umweltbundesamt.de/themen/verkehr-laerm/emissionsdaten
+# 	• OpenStreetMap: Die geografischen Daten für die Routenberechnung stammen von OpenStreetMap via Geopy: https://www.openstreetmap.org/
+# 	• Umweltauswirkungen: Die Umrechnung in Baum-Äquivalente basiert auf wissenschaftlichen Studien zur CO2-Bindung durch Bäume: https://www.forstwirtschaft-in-deutschland.de/waelder-entdecken/waldfunktionen/klimaschutz/

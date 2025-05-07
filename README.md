@@ -1,10 +1,11 @@
-# EmissionExplorer - CO2-Fussabdruck-Tracker für Reisen
+# Grundlagen und Methoden der Informatik für Wirtschaftswissenschaften
+Gruppe 08.09
 
-## Projektbeschreibung
+## EmissionExplorer - CO2-Fussabdruck-Tracker für Reisen
 
 EmissionExplorer ist eine Streamlit-Webanwendung, die entwickelt wurde, um den CO2-Fussabdruck von Reisen zu berechnen und zu visualisieren. Die App ermöglicht es Nutzern, verschiedene Transportmittel für ihre Reiseroute zu vergleichen und die umweltfreundlichste Option zu finden.
 
-Diese Anwendung wurde im Rahmen des Gruppenprojekts für den Kurs "Grundlagen und Methoden der Informatik" an der Universität St. Gallen entwickelt.
+Diese Anwendung wurde im Rahmen des Gruppenprojekts für den Kurs "Grundlagen und Methoden der Informatik für Wirtschaftswissenschaften" an der Universität St. Gallen entwickelt.
 
 ## Funktionen
 
@@ -17,8 +18,6 @@ Diese Anwendung wurde im Rahmen des Gruppenprojekts für den Kurs "Grundlagen un
 
 ## Technische Anforderungen
 
-Die App erfüllt alle im Projektauftrag geforderten Anforderungen:
-
 1. **Klares Problem**: Die App löst das Problem der CO2-Fussabdruckberechnung für Reisen
 2. **Datennutzung**: Die App lädt Geodaten über die Nominatim API
 3. **Datenvisualisierung**: Interaktive Diagramme zur Darstellung der CO2-Emissionen
@@ -30,7 +29,7 @@ Die App erfüllt alle im Projektauftrag geforderten Anforderungen:
 
 ### Voraussetzungen
 
-- Python 3.7 oder höher
+- Python 3.8 oder höher
 - pip (Python Package Manager)
 
 ### Installationsschritte
@@ -76,15 +75,26 @@ Nach der Ausführung dieses Befehls wird ein lokaler Webserver gestartet und die
 5. Klicke auf "CO2-Fussabdruck berechnen"
 6. Analysiere die Ergebnisse in den verschiedenen Visualisierungen und Tabellen
 
-## Datenquellen
+## Externe Abhängigkeiten
 
-- Distanzberechnung: OpenStreetMap via GeoPy
-- CO2-Faktoren: Durchschnittswerte basierend auf öffentlichen Umweltdatenbanken
-- ML-Modell: Trainiert auf synthetischen Daten (für Demonstrationszwecke)
+- **streamlit**: Erstellt die interaktive webbasierte Benutzeroberfläche für den CO2-Fußabdruck-Tracker
+- **pandas**: Verarbeitet Daten und unterstützt die Analyse von Transportemissionen
+- **plotly.express**: Erstellt interaktive Visualisierungen für CO2-Vergleiche
+- **numpy**: Handhabt numerische Berechnungen und die Erzeugung synthetischer Daten
+- **geopy**: Bietet Geocoding-Funktionalität, um Adressen in Koordinaten umzuwandeln und Entfernungen zu berechnen
+- **scikit-learn**: Implementiert Machine-Learning-Modelle (Random Forest) für CO2-Vorhersagen
+- **requests**: Ermöglicht HTTP-Anfragen für Standortdaten
 
-## Projektbeitragende
+## Quellen und Referenzen
 
-Dieses Projekt wurde im Rahmen des Kurses "Grundlagen und Methoden der Informatik" an der Universität St. Gallen entwickelt.
+- **Streamlit Dokumentation**: https://docs.streamlit.io
+- **Pandas Dokumentation**: https://pandas.pydata.org/docs/
+- **Plotly Dokumentation**: https://plotly.com/python/
+- **GeoPy Dokumentation**: https://geopy.readthedocs.io/
+- **Scikit-learn Dokumentation**: https://scikit-learn.org/stable/
+- **OpenStreetMap**: https://www.openstreetmap.org/
+- **CO2-Emissionsdaten**: https://www.umweltbundesamt.de/themen/verkehr-laerm/emissionsdaten
+- **ChatGPT und GitHub Copilot**: Code-Optimierung, Debugging und Strukturierung des ReadMe Files.
 
 ## Hinweise zur Weiterentwicklung
 
@@ -94,7 +104,3 @@ Für die Weiterentwicklung der App könnten folgende Funktionen implementiert we
 - Erweiterung des ML-Modells mit realen Trainingsdaten
 - Implementierung einer Funktion zur CO2-Kompensationsberechnung
 - Möglichkeit, mehrere Reisen zu speichern und zu vergleichen
-
-## Hinweis zu KI-Unterstützung
-
-In Übereinstimmung mit den Referenzierungsregeln für Generative KI an der HSG wurden Teile des Codes unter Verwendung von KI-Tools entwickelt. Die grundlegende Struktur und Logik der Anwendung wurden jedoch eigenständig konzipiert und implementiert.
