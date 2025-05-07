@@ -35,23 +35,22 @@ Diese Anwendung wurde im Rahmen des Gruppenprojekts für den Kurs "Grundlagen un
 ### Installationsschritte
 
 1. Repository klonen oder Dateien herunterladen
-
-2. Ins Projektverzeichnis wechseln
    ```
-   cd pfad/zu/emission-explorer
+   git clone https://github.com/Gruppe0809/EmissionExplorer
+   cd EmissionExplorer
    ```
 
-3. Virtuelle Umgebung erstellen (empfohlen)
+2. Virtuelle Umgebung erstellen (empfohlen)
    ```
    python -m venv venv
    ```
 
-4. Virtuelle Umgebung aktivieren
+3. Virtuelle Umgebung aktivieren
      ```
      source venv/bin/activate
      ```
 
-5. Abhängigkeiten installieren
+4. Abhängigkeiten installieren
    ```
    pip install -r requirements.txt
    ```
