@@ -25,7 +25,7 @@ Vergleiche verschiedene Transportmittel und finde die umweltfreundlichste Option
 """)
 
 # ML-Modell-Training mit synthetischen Daten
-@st.cache_data  # Caching der Modellergebnisse für bessere Performance
+@st.cache_data  # Ergebnisse dieser Funktion werden gecached, um Berechnungen nicht bei jedem Seiten-Refresh zu wiederholen
 def train_co2_model():
     # Initialisierung der Zufallsgenerierung für reproduzierbare Ergebnisse
     np.random.seed(42)
@@ -62,7 +62,7 @@ def train_co2_model():
     season_factor[seasons == "Herbst"] = 1.05     
     season_factor[seasons == "Winter"] = 1.15  
     
-    traffic_factor = 1 + (traffic_levels - 1) * 0.05 
+    traffic_factor = 1 + (traffic_levels - 1) * 0.05    #Einfluss durch Verkehrsaufkommen
     
     # Zielwerte berechnen (CO2-Emissionen)
     co2_emissions = base_emissions * age_factor * type_factor * season_factor * traffic_factor
@@ -81,9 +81,9 @@ def train_co2_model():
         season_encoded
     ], axis=1)
     
-    y = co2_emissions
+    y = co2_emissions   #Zielvariable
     
-    # Daten aufteilen
+    # Trainings- und Testdaten splitten
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
     # Modell trainieren
@@ -134,7 +134,7 @@ def predict_co2_with_ml(distance, vehicle_age, vehicle_type, season, traffic_lev
 # Modell vorab laden
 model, feature_columns = train_co2_model()
 
-# Seitenleiste für Eingaben
+# Seitenleiste für Benutzereingaben
 with st.sidebar:
     st.header("Reisedetails")
     
@@ -150,27 +150,27 @@ with st.sidebar:
         default=["Auto", "Flugzeug", "Zug"]
     )
     
-    # Personen
+    # Anzahl der Reisenden
     travelers = st.number_input("Anzahl der Reisenden", min_value=1, value=1)
     
     # Berechnung starten
     calculate_button = st.button("CO2-Fussabdruck berechnen")
     
     # Machine Learning Abschnitt
-    st.markdown("---")
+    st.markdown("---")  #Trennlinie zur visuellen Gliederung
     st.header("Erweiterte Analyse")
     st.write("Verwende Machine Learning für präzisere CO2-Vorhersagen für Autofahrten.")
     
     # Neue Eingabeparameter für das ML-Modell
     use_ml = st.checkbox("Erweiterte CO2-Berechnung mit ML", value=False)
     
-    if use_ml:
+    if use_ml:   #Zusätzliche Eingabeparameter, falls ML-Modell ausgewählt wird
         vehicle_age = st.slider("Alter des Fahrzeugs (Jahre)", 0, 20, 5)
         vehicle_type = st.selectbox("Fahrzeugtyp", ["Kleinwagen", "Mittelklasse", "SUV", "Luxusklasse"])
         season = st.selectbox("Jahreszeit", ["Frühling", "Sommer", "Herbst", "Winter"])
         traffic_level = st.slider("Verkehrsaufkommen (1-10)", 1, 10, 5)
     
-    # Datenquellen angeben
+    # Quellenangabe am Ende der Sidebar
     st.markdown("---")
     st.caption("""
     **Datenquellen:**
@@ -200,21 +200,21 @@ distance_factors = {
 # Hauptfunktion zur Berechnung des CO2-Fussabdrucks
 def calculate_co2_footprint(start, end, transports, num_travelers):
     # Geocoding von Start- und Endpunkt
-    geolocator = Nominatim(user_agent="co2_footprint_tracker")
+    geolocator = Nominatim(user_agent="co2_footprint_tracker", timeout=5)
     
-    try:
+    try:    # Versuche, Start- und Endadresse in Koordinaten umzuwandeln
         start_location = geolocator.geocode(start)
         end_location = geolocator.geocode(end)
         
-        if not start_location or not end_location:
+        if not start_location or not end_location:  # Wenn einer der Orte nicht geunden wird, zeige Fehlermeldung im UI
             st.error("Konnte einen oder beide Standorte nicht finden. Bitte überprüfe deine Eingaben.")
             return None
         
-        # Berechnung der Distanz
+        # Extrahiere Breite- und Längengrad für Distanzberechnung
         start_coords = (start_location.latitude, start_location.longitude)
         end_coords = (end_location.latitude, end_location.longitude)
         
-        # Direkte Distanz in km
+        # Berechne die direkte Luftlinie in Kilometern (zweistellige Genauigkeit)
         direct_distance = round(geodesic(start_coords, end_coords).kilometers, 2)
         
         # Realistischere Distanzen für verschiedene Transportmittel (Anpassungsfaktoren)
@@ -229,11 +229,16 @@ def calculate_co2_footprint(start, end, transports, num_travelers):
         # Berechnung der CO2-Emissionen für die ausgewählten Transportmittel
         results = []
         for transport in transports:
-            distance = direct_distance * distance_factors[transport]
-            co2_per_km = emission_factors[transport]
-            total_co2 = distance * co2_per_km
+            # Gesamtstrecke = direkte Luftlinie × Faktor
+            distance    = direct_distance * distance_factors[transport]
+            # CO2-Ausstoss pro Kilometer (aus globaler Variable emission_factors)
+            co2_per_km  = emission_factors[transport]
+            # Gesamter CO2-Ausstoss (kg)
+            total_co2   = distance * co2_per_km
+            # Emission pro Person
             co2_per_person = total_co2 / num_travelers
             
+            # Füge die berechneten Werte als Dictionary zur Liste hinzu
             results.append({
                 "Transportmittel": transport,
                 "Distanz (km)": round(distance, 2),
@@ -241,18 +246,20 @@ def calculate_co2_footprint(start, end, transports, num_travelers):
                 "Gesamt CO2 (kg)": round(total_co2, 2)
             })
         
+        # Gib ein DataFrame mit allen Ergebnissen plus Zusatzinfos zurück
         return pd.DataFrame(results), direct_distance, start_coords, end_coords
     
     except Exception as e:
+        # Bei unerwarteten Fehlern im Try-Block: Fehlermeldung anzeigen
         st.error(f"Fehler bei der Berechnung: {e}")
         return None
 
 # Hauptbereich - Ergebnisdarstellung
 if calculate_button:
-    with st.spinner("Berechne CO2-Fussabdruck..."):
+    with st.spinner("Berechne CO2-Fussabdruck..."): # Zeige während der Berechnung einen Lade-Indikator an
         result = calculate_co2_footprint(start_point, end_point, selected_transports, travelers)
         
-        if result:
+        if result:  # Wenn die Funktion gültige Daten zurückliefert
             df, direct_distance, start_coords, end_coords = result
             
             # Ergebnisübersicht
@@ -272,12 +279,13 @@ if calculate_button:
                     title=f"CO2-Vergleich verschiedener Transportmittel für {travelers} Reisende",
                     labels={"CO2 pro Person (kg)": "CO2-Emissionen pro Person (kg)"}
                 )
-                fig.update_layout(height=500)
+                fig.update_layout(height=500)   # Höhe des Diagramms anpassen
                 st.plotly_chart(fig, use_container_width=True)
                 
                 # Umweltauswirkungen visualisieren
                 st.subheader("Umweltauswirkungen")
                 for transport in df["Transportmittel"]:
+                    # Greife die Zeile zum jeweiligen Transportmittel ab
                     transport_data = df[df["Transportmittel"] == transport].iloc[0]
                     co2 = transport_data["CO2 pro Person (kg)"]
                     
@@ -285,6 +293,7 @@ if calculate_button:
                     trees_needed = round(co2 / 21, 2)  
                     equivalent_days = round(co2 / 10, 1)  
                     
+                    # Ausgabe der Vergleiche
                     st.write(f"**{transport}:** {co2} kg CO2 pro Person")
                     st.write(f"Entspricht dem CO2, das {trees_needed} Bäume in einem Jahr aufnehmen")
                     st.write(f"Oder den durchschnittlichen CO2-Emissionen von {equivalent_days} Tagen")
@@ -309,6 +318,7 @@ if calculate_button:
     
             # Vergleichende Darstellung
             st.header("CO2-Einsparpotential")
+            # Nur anzeigen, wenn mehr als ein Transportmittel gewählt wurde
             if len(selected_transports) > 1:
                 min_co2_transport = df.loc[df["CO2 pro Person (kg)"].idxmin()]["Transportmittel"]
                 max_co2_transport = df.loc[df["CO2 pro Person (kg)"].idxmax()]["Transportmittel"]
@@ -316,9 +326,11 @@ if calculate_button:
                 min_co2 = df[df["Transportmittel"] == min_co2_transport]["CO2 pro Person (kg)"].values[0]
                 max_co2 = df[df["Transportmittel"] == max_co2_transport]["CO2 pro Person (kg)"].values[0]
                 
+                # Berechne die absolute und relative Ersparnis
                 savings = max_co2 - min_co2
                 saving_percentage = (savings / max_co2) * 100
                 
+                # Gib dem Nutzer einen klaren Vergleichstext aus
                 st.write(f"Durch die Wahl von **{min_co2_transport}** statt **{max_co2_transport}** kannst du **{savings:.2f} kg CO2** pro Person einsparen.")
                 st.write(f"Das entspricht einer Reduktion von **{saving_percentage:.1f}%**!")
                 
@@ -328,6 +340,7 @@ if calculate_button:
                     {"Transport": min_co2_transport, "CO2 (kg)": min_co2, "Typ": "Niedrigste Emissionen"}
                 ])
                 
+                 # Zeichne Balkendiagramm, das die Differenz visuell hervorhebt
                 fig = px.bar(
                     saving_data,
                     x="Transport",
@@ -365,12 +378,15 @@ if calculate_button:
                 
                 with col1:
                     st.subheader("Vergleich der CO2-Berechnungen")
+                     # Ausgabe der Standard- und ML-Berechnung als Text
                     st.write(f"**Standard-Berechnung:** {standard_co2:.2f} kg CO2 pro Person")
                     st.write(f"**ML-Berechnung:** {ml_co2_per_person:.2f} kg CO2 pro Person")
                     
+                    # Differenz und Prozentualer Unterschied
                     difference = ml_co2_per_person - standard_co2
                     percentage = (difference / standard_co2) * 100
                     
+                    # Unterschiedstext je nach Richtung der Abweichung
                     if difference > 0:
                         st.write(f"Das ML-Modell schätzt **{abs(difference):.2f} kg ({abs(percentage):.1f}%)** mehr CO2-Emissionen als die Standardberechnung.")
                     else:
@@ -402,7 +418,7 @@ if calculate_button:
                     )
                     st.plotly_chart(fig, use_container_width=True)
                 
-                # Feature Importance
+                # Feature Importance aus dem Random Forest extrahieren und visualisieren
                 st.subheader("Feature Importance: Welche Faktoren beeinflussen die CO2-Emissionen?")
                 
                 # Feature Importance berechnen
@@ -477,3 +493,4 @@ Machine Learning-Techniken, um präzisere CO2-Vorhersagen zu ermöglichen.
 # 	• CO2-Emissionsdaten: Die verwendeten Emissionsfaktoren basieren auf Durchschnittswerten aus öffentlichen Forschungsdaten des Umweltbundesamtes: https://www.umweltbundesamt.de/themen/verkehr-laerm/emissionsdaten
 # 	• OpenStreetMap: Die geografischen Daten für die Routenberechnung stammen von OpenStreetMap via Geopy: https://www.openstreetmap.org/
 # 	• Umweltauswirkungen: Die Umrechnung in Baum-Äquivalente basiert auf wissenschaftlichen Studien zur CO2-Bindung durch Bäume: https://www.forstwirtschaft-in-deutschland.de/waelder-entdecken/waldfunktionen/klimaschutz/
+# 	• ChatGPT und GitHub Copilot: Verwendet für Code-Optimierung und Debugging

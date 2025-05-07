@@ -94,7 +94,7 @@ Nach der Ausführung dieses Befehls wird ein lokaler Webserver gestartet und die
 - **Scikit-learn Dokumentation**: https://scikit-learn.org/stable/
 - **OpenStreetMap**: https://www.openstreetmap.org/
 - **CO2-Emissionsdaten**: https://www.umweltbundesamt.de/themen/verkehr-laerm/emissionsdaten
-- **ChatGPT und GitHub Copilot**: Code-Optimierung, Debugging und Strukturierung des ReadMe Files.
+- **ChatGPT und GitHub Copilot**: Code-Optimierung, Debugging und Strukturierung des Readme Files.
 
 ## Hinweise zur Weiterentwicklung
 
